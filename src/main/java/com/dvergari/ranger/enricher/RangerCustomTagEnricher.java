@@ -80,7 +80,14 @@ public class RangerCustomTagEnricher extends RangerAbstractContextEnricher {
                 rsObj = pstmtObj.executeQuery();
                 while (rsObj.next()) {
                     String user = rsObj.getString("user");
-                    String[] tags = rsObj.getString("taglist").split(",");
+                    String[] tags = null;
+                    try {
+                       tags = rsObj.getString("taglist").split(",");
+                    } catch (NullPointerException ex) {
+                       if (LOG.isDebugEnabled()) {
+                           LOG.debug("Tag list is empty. Returning null value");
+                       }
+                    }
                     cache.put(user, tags);
                 }
                 rsObj.close();
